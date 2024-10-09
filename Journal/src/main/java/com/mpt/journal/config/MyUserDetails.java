@@ -2,13 +2,11 @@ package com.mpt.journal.config;
 
 import com.mpt.journal.model.UserModel;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
-
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collections;
 
 public class MyUserDetails implements UserDetails {
 
@@ -20,11 +18,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.stream(
-                        user.getRole().getRoleName().split(",")
-                )
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getRoleName()));
     }
 
     @Override
@@ -36,4 +30,5 @@ public class MyUserDetails implements UserDetails {
     public String getUsername() {
         return user.getLogin();
     }
+
 }

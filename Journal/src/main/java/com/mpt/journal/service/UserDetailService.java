@@ -1,7 +1,6 @@
 package com.mpt.journal.service;
 
 import com.mpt.journal.config.MyUserDetails;
-import com.mpt.journal.model.RoleModel;
 import com.mpt.journal.model.UserModel;
 import com.mpt.journal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

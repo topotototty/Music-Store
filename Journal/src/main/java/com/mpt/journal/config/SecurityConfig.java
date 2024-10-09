@@ -1,11 +1,10 @@
 package com.mpt.journal.config;
 
 import com.mpt.journal.controller.CustomAuthenticationFailureHandler;
-import com.mpt.journal.service.UserService;
+import com.mpt.journal.service.UserDetailService; // Обратите внимание на изменение
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -20,45 +19,45 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final UserService userService;
-
-    @Autowired
-    public SecurityConfig(@Lazy UserService userService) {
-        this.userService = userService;
-    }
+    private final UserDetailService userDetailService; // Используем UserDetailService вместо UserService
 
     @Autowired
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
+    @Autowired
+    public SecurityConfig(UserDetailService userDetailService) {
+        this.userDetailService = userDetailService;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/**").hasRole("ADMIN")
-                        .requestMatchers("/main/calculate").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/auth/login", "/auth/reg", "/auth/logout").permitAll() // доступ для всех на страницы входа и регистрации
+                        .requestMatchers("/users/**").hasRole("ADMIN") // доступ только для администраторов
                         .requestMatchers("/index", "/auth/logout-confirmation").authenticated() // доступ к этим страницам только для авторизованных пользователей
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated() // все остальные запросы требуют аутентификации
                 )
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/auth/login")
-                        .failureHandler(customAuthenticationFailureHandler)
-                        .defaultSuccessUrl("/index", true)
+                        .loginPage("/auth/login") // страница входа
+                        .failureHandler(customAuthenticationFailureHandler) // обработчик ошибок входа
+                        .defaultSuccessUrl("/index", true) // перенаправление после успешного входа
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/auth/logout")
+                        .logoutUrl("/auth/logout") // URL для выхода
                         .logoutSuccessUrl("/auth/login")
                         .permitAll()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedPage("/access-denied"))
-                .sessionManagement(session -> session
-                        .invalidSessionUrl("/auth/login")
-                        .maximumSessions(1)
+                        .accessDeniedPage("/access-denied") // страница, отображаемая при отказе в доступе
                 )
-                .build();
+                .sessionManagement(session -> session
+                        .invalidSessionUrl("/auth/login") // перенаправление на страницу входа при недействительной сессии
+                        .maximumSessions(1) // максимальное количество сессий для пользователя
+                );
+
+        return http.build();
     }
 
     @Bean
@@ -67,9 +66,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        provider.setUserDetailsService(userDetailService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

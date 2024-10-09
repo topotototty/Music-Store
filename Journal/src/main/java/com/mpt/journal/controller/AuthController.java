@@ -2,6 +2,7 @@ package com.mpt.journal.controller;
 
 import com.mpt.journal.model.RoleModel;
 import com.mpt.journal.model.UserModel;
+import com.mpt.journal.service.RoleService;
 import com.mpt.journal.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     @GetMapping("/login")
     public String login() {
@@ -42,24 +45,31 @@ public class AuthController {
     public String register(@Valid @ModelAttribute("userModel") UserModel userModel,
                            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            return "reg";
+            return "reg"; // Возвращаем форму регистрации с ошибками
         }
 
+        // Проверяем, существует ли уже логин
         if (userService.findByLogin(userModel.getLogin()).isPresent()) {
             model.addAttribute("loginError", "Этот логин уже занят. Пожалуйста, выберите другой.");
             return "reg";
         }
 
+        // Проверяем, существует ли уже email
         if (userService.findByEmail(userModel.getEmail()).isPresent()) {
             model.addAttribute("emailError", "Этот email уже используется. Пожалуйста, выберите другой.");
             return "reg";
         }
 
-        RoleModel userRole = new RoleModel("ROLE_USER");
-        userModel.setRole(userRole);
+        // Получаем роль пользователя из базы данных
+        RoleModel userRole = roleService.findByRoleName("ROLE_USER").orElseThrow(() -> new IllegalArgumentException("Роль ROLE_USER не найдена"));
+        userModel.setRole(userRole); // Назначаем роль пользователю
+
+        // Сохраняем пользователя
         userService.createUser(userModel);
 
-        return "redirect:/index";
+        return "redirect:/index"; // Перенаправляем на главную страницу после успешной регистрации
     }
+
+
 }
 
