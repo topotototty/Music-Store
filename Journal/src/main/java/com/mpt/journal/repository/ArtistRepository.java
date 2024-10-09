@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArtistRepository extends JpaRepository<ArtistModel, Long> {
-
+    boolean existsByArtistName(String artistName);
 }

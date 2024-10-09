@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "genre")
+@Table(name = "genre", uniqueConstraints = {@UniqueConstraint(columnNames = "genre_name")})
 public class GenreModel {
 
     @Id
@@ -21,6 +21,6 @@ public class GenreModel {
 
     @NotBlank(message = "Название жанра не может быть пустым")
     @Size(max = 50, message = "Название жанра должно быть не более 50 символов")
-    @Column(name = "genre_name", nullable = false, length = 50)
+    @Column(name = "genre_name", nullable = false, length = 50, unique = true)
     private String genreName;
 }

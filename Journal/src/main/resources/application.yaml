@@ -19,4 +19,4 @@ server:
   port: 8080
   servlet:
     session:
-      timeout: 20s
+      timeout: 1000s
