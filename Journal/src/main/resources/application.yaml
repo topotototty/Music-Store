@@ -1,0 +1,22 @@
+spring:
+  config:
+    name: journal
+  datasource:
+    url: jdbc:postgresql://localhost:5432/MusicStore
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql:
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 20s
