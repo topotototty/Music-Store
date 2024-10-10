@@ -78,4 +78,5 @@ public class GenreController {
         genreRepository.delete(genre);
         return "redirect:/products";
     }
+
 }

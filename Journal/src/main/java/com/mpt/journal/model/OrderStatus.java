@@ -1,10 +1,10 @@
 package com.mpt.journal.model;
 
 public enum OrderStatus {
-        NEW("Новый"),
-        IN_PROGRESS("В процессе выполнения"),
-        COMPLETED("Выполнен"),
-        CANCELED("Отменен");
+    NEW("Новый"),
+    IN_PROGRESS("В процессе выполнения"),
+    COMPLETED("Выполнен"),
+    CANCELED("Отменен");
 
     private final String displayName;
 
@@ -14,5 +14,10 @@ public enum OrderStatus {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    @Override
+    public String toString() {
+        return name();
     }
 }

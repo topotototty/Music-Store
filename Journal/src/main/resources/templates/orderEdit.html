@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Изменение заказа</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Изменить статус заказа</h2>
+
+    <form th:action="@{/orders/edit/{id}(id=${order.orderId})}" th:object="${order}" method="post">
+        <div class="mb-3">
+            <label for="status" class="form-label">Статус заказа</label>
+            <select id="status" class="form-select" th:field="*{status}">
+                <option th:each="status : ${statuses}" th:value="${status}" th:text="${status.displayName}"
+                        th:selected="${status} == ${order.status}"></option>
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a th:href="@{/orders}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

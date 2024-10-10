@@ -1,7 +1,5 @@
 package com.mpt.journal.model;
 
-import com.mpt.journal.model.OrderItemModel;
-import com.mpt.journal.model.UserModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -40,6 +38,12 @@ public class OrderModel {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 30)
     private OrderStatus status;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderItemModel> orderItems;
+
+    @ManyToMany
+    @JoinTable(
+            name = "order_albums", // имя промежуточной таблицы
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "album_id")
+    )
+    private List<AlbumModel> albums;  // Список альбомов в заказе
 }

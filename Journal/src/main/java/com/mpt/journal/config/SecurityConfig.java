@@ -34,7 +34,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/reg", "/auth/logout").permitAll() // доступ для всех на страницы входа и регистрации
-                        .requestMatchers("/users/**", "/products/**").hasRole("ADMIN") // доступ только для администраторов
+                        .requestMatchers("/users/**", "/products/**", "/orders/**").hasRole("ADMIN") // доступ только для администраторов
                         .requestMatchers("/index", "/auth/logout-confirmation").authenticated() // доступ к этим страницам только для авторизованных пользователей
                         .anyRequest().authenticated() // все остальные запросы требуют аутентификации
                 )

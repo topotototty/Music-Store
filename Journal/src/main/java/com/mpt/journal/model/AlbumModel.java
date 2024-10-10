@@ -25,11 +25,12 @@ public class AlbumModel {
     @Column(name = "album_title", nullable = false, length = 100)
     private String albumTitle;
 
+    @NotNull(message = "Дата релиза обязательна")
     @PastOrPresent(message = "Дата релиза не может быть в будущем")
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    @DecimalMin(value = "1.0", inclusive = false, message = "Цена должна быть больше 0")
+    @DecimalMin(value = "1.00", inclusive = false, message = "Цена должна быть больше 1.00")
     @Digits(integer = 10, fraction = 2, message = "Цена должна быть в формате DECIMAL(10,2)")
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;

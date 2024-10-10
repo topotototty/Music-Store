@@ -6,6 +6,7 @@ import com.mpt.journal.service.RoleService;
 import com.mpt.journal.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,12 @@ public class AuthController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthController(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @GetMapping("/login")
     public String login() {
@@ -64,12 +71,10 @@ public class AuthController {
         RoleModel userRole = roleService.findByRoleName("ROLE_USER").orElseThrow(() -> new IllegalArgumentException("Роль ROLE_USER не найдена"));
         userModel.setRole(userRole); // Назначаем роль пользователю
 
-        // Сохраняем пользователя
+        String encodedPassword = passwordEncoder.encode(userModel.getPassword());
+        userModel.setPassword(encodedPassword);
         userService.createUser(userModel);
 
         return "redirect:/index"; // Перенаправляем на главную страницу после успешной регистрации
     }
-
-
 }
-
